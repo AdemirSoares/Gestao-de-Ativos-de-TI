@@ -6,7 +6,110 @@ Dashboard - Gestão de Ativos
 
 {% block content %}
 
-<h1>Dashboard</h1>
-<p>Visão geral dos ativos de TI</p>
+<div class="page-header">
+    <div>
+        <h1>Dashboard</h1>
+        <p>Visão geral dos ativos de TI da empresa</p>
+    </div>
+    <a href="#" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i>
+        Novo Ativo
+    </a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="dashboard-card">
+            <div class="card-icon bg-primary">
+                <i class="bi bi-hdd-network"></i>
+            </div>
+            <div>
+                <span>Total de Ativos</span>
+                <h3>1.284</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="dashboard-card">
+            <div class="card-icon bg-success">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div>
+                <span>Ativos em Uso</span>
+                <h3>982</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="dashboard-card">
+            <div class="card-icon bg-warning">
+                <i class="bi bi-tools"></i>
+            </div>
+            <div>
+                <span>Em Manutenção</span>
+                <h3>37</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="dashboard-card">
+            <div class="card-icon bg-danger">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <div>
+                <span>Inativos</span>
+                <h3>265</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-card">
+    <div class="table-header">
+        <h5>Últimos ativos cadastrados</h5>
+    </div>
+
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Patrimônio</th>
+                <th>Tipo</th>
+                <th>Sistema</th>
+                <th>Responsável</th>
+                <th>Status</th>
+                <th>Localização</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>NB-001</td>
+                <td>Notebook</td>
+                <td>Windows 11 Pro</td>
+                <td>Ademir Soares</td>
+                <td><span class="badge text-bg-success">Em uso</span></td>
+                <td>CyberSecurity</td>
+            </tr>
+            <tr>
+                <td>SRV-002</td>
+                <td>Servidor</td>
+                <td>Ubuntu Server 22.04</td>
+                <td>Infraestrutura</td>
+                <td><span class="badge text-bg-primary">Ativo</span></td>
+                <td>Data Center</td>
+            </tr>
+            <tr>
+                <td>FW-003</td>
+                <td>Firewall</td>
+                <td>FortiOS</td>
+                <td>Segurança</td>
+                <td><span class="badge text-bg-warning">Manutenção</span></td>
+                <td>Rack 01</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}
