@@ -7,7 +7,41 @@ def init_app(app):
 
     @app.route("/")
     def dashboard():
-        return render_template("dashboard.html", pagina="dashboard")
+
+        total_ativos = len(ativos)
+
+        ativos_ativos = len([
+            ativo for ativo in ativos
+            if ativo["status"] == "Ativo"
+        ])
+
+        ativos_em_uso = len([
+            ativo for ativo in ativos
+            if ativo["status"] == "Em uso"
+        ])
+
+        ativos_manutencao = len([
+            ativo for ativo in ativos
+            if ativo["status"] == "Manutenção"
+        ])
+
+        ativos_inativos = len([
+            ativo for ativo in ativos
+            if ativo["status"] == "Inativo"
+        ])
+
+        ultimos_ativos = ativos[-3:]
+
+        return render_template(
+            "dashboard.html",
+            pagina="dashboard",
+            total_ativos=total_ativos,
+            ativos_ativos=ativos_ativos,
+            ativos_em_uso=ativos_em_uso,
+            ativos_manutencao=ativos_manutencao,
+            ativos_inativos=ativos_inativos,
+            ultimos_ativos=ultimos_ativos
+        )
 
     @app.route("/ativos")
     def listar_ativos():
