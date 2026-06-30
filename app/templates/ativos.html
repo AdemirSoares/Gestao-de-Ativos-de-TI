@@ -12,7 +12,7 @@ Ativos - Gestão de Ativos
         <p>Gerencie os ativos de TI cadastrados no sistema</p>
     </div>
 
-    <a href="/ativos/novo" class="btn btn-success">>
+    <a href="/ativos/novo" class="btn btn-success">
         <i class="bi bi-plus-circle"></i>
         Novo Ativo
     </a>
@@ -22,10 +22,18 @@ Ativos - Gestão de Ativos
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Lista de ativos</h5>
 
-        <div class="search-box">
+        <form method="GET" action="/ativos" class="search-box">
+
             <i class="bi bi-search"></i>
-            <input type="text" class="form-control" placeholder="Pesquisar ativo...">
-        </div>
+
+            <input
+                type="text"
+                class="form-control"
+                name="pesquisa"
+                placeholder="Pesquisar ativo..."
+                value="{{ pesquisa }}">
+
+        </form>
     </div>
 
     <table class="table align-middle">
@@ -81,13 +89,18 @@ Ativos - Gestão de Ativos
                         </td>
                     </tr>
                 {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="8" class="text-center text-muted py-4">
-                        Nenhum ativo cadastrado até o momento.
-                    </td>
-                </tr>
-            {% endif %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            {% if pesquisa and total_ativos > 0 %}
+                                <i class="bi bi-search"></i>
+                                Nenhum ativo encontrado para a pesquisa "{{ pesquisa }}".
+                            {% else %}
+                                Nenhum ativo cadastrado até o momento.
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
         </tbody>
     </table>
 </div>

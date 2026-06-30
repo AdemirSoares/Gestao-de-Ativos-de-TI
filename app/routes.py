@@ -11,10 +11,33 @@ def init_app(app):
 
     @app.route("/ativos")
     def listar_ativos():
+
+        pesquisa = request.args.get("pesquisa", "").lower()
+
+        ativos_filtrados = ativos
+
+        if pesquisa:
+
+            ativos_filtrados = []
+
+            for ativo in ativos:
+
+                if (
+                    pesquisa in ativo["patrimonio"].lower()
+                    or pesquisa in ativo["hostname"].lower()
+                    or pesquisa in ativo["tipo"].lower()
+                    or pesquisa in ativo["sistema"].lower()
+                    or pesquisa in ativo["responsavel"].lower()
+                ):
+
+                    ativos_filtrados.append(ativo)
+
         return render_template(
             "ativos.html",
             pagina="ativos",
-            ativos=ativos
+            ativos=ativos_filtrados,
+            pesquisa=pesquisa,
+            total_ativos=len(ativos)
         )
 
     @app.route("/ativos/novo", methods=["GET", "POST"])
