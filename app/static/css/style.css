@@ -186,3 +186,51 @@ body {
 .sidebar-link i {
     font-size: 16px;
 }
+
+.search-box {
+    width: 280px;
+    position: relative;
+}
+
+.search-box i {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+
+.search-box input {
+    padding-left: 36px;
+}
+
+.form-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 8px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.breadcrumb-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-light);
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.breadcrumb-area strong {
+    color: var(--text-dark);
+}
+
+.breadcrumb-area i {
+    font-size: 11px;
+}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+Ativos - Gestão de Ativos
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Ativos</h1>
+        <p>Gerencie os ativos de TI cadastrados no sistema</p>
+    </div>
+
+    <a href="/ativos/novo" class="btn btn-success">>
+        <i class="bi bi-plus-circle"></i>
+        Novo Ativo
+    </a>
+</div>
+
+<div class="table-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Lista de ativos</h5>
+
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" placeholder="Pesquisar ativo...">
+        </div>
+    </div>
+
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Patrimônio</th>
+                <th>Hostname</th>
+                <th>Tipo</th>
+                <th>Sistema</th>
+                <th>Responsável</th>
+                <th>Status</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if ativos %}
+                {% for ativo in ativos %}
+                    <tr>
+                        <td>{{ ativo.id }}</td>
+                        <td>{{ ativo.patrimonio }}</td>
+                        <td>{{ ativo.hostname }}</td>
+                        <td>{{ ativo.tipo }}</td>
+                        <td>{{ ativo.sistema }}</td>
+                        <td>{{ ativo.responsavel }}</td>
+                        <td>
+                            {% if ativo.status == "Em uso" %}
+                                <span class="badge text-bg-success">Em uso</span>
+                            {% elif ativo.status == "Ativo" %}
+                                <span class="badge text-bg-primary">Ativo</span>
+                            {% elif ativo.status == "Manutenção" %}
+                                <span class="badge text-bg-warning">Manutenção</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="/ativos/{{ ativo.id }}/editar" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="#"
+                                class="btn btn-sm btn-outline-danger btn-excluir"
+                                data-id="{{ ativo.id }}"
+                                data-patrimonio="{{ ativo.patrimonio }}"
+                                data-hostname="{{ ativo.hostname }}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalExcluir">
+
+                                <i class="bi bi-trash"></i>
+
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        Nenhum ativo cadastrado até o momento.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

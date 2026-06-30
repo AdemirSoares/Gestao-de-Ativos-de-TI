@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}
+Ficha do Ativo - Gestão de Ativos
+{% endblock %}
+
+{% block content %}
+
+<div class="breadcrumb-area">
+    <span>Dashboard</span>
+    <i class="bi bi-chevron-right"></i>
+    <span>Ativos</span>
+    <i class="bi bi-chevron-right"></i>
+    <strong>{{ titulo }}</strong>
+</div>
+
+<div class="page-header">
+    <div>
+        <h1>{{ titulo }}</h1>
+        <p>{{ subtitulo }}</p>
+    </div>
+</div>
+
+{% if erro %}
+<div class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle"></i>
+    {{ erro }}
+</div>
+{% endif %}
+
+<div class="table-card">
+    <form method="POST">
+        <h5 class="form-section-title">Informações Gerais</h5>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="form-label">Patrimônio</label>
+                <input type="text" class="form-control" name="patrimonio" placeholder="Ex: NB-001" value="{{ ativo.patrimonio if ativo else '' }}" required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Hostname</label>
+                <input type="text" class="form-control" name="hostname" placeholder="Ex: NOTE-CYBER-01" value="{{ ativo.hostname if ativo else '' }}" required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Tipo</label>
+                <select class="form-select" name="tipo" required>
+                    <option value="">Selecione...</option>
+                    <option value="Notebook" {% if ativo and ativo.tipo == "Notebook" %}selected{% endif %}>Notebook</option>
+                    <option value="Desktop" {% if ativo and ativo.tipo == "Desktop" %}selected{% endif %}>Desktop</option>
+                    <option value="Servidor" {% if ativo and ativo.tipo == "Servidor" %}selected{% endif %}>Servidor</option>
+                    <option value="Firewall" {% if ativo and ativo.tipo == "Firewall" %}selected{% endif %}>Firewall</option>
+                    <option value="Switch" {% if ativo and ativo.tipo == "Switch" %}selected{% endif %}>Switch</option>
+                    <option value="Roteador" {% if ativo and ativo.tipo == "Roteador" %}selected{% endif %}>Roteador</option>
+                    <option value="Impressora" {% if ativo and ativo.tipo == "Impressora" %}selected{% endif %}>Impressora</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="form-label">Fabricante</label>
+                <input type="text" class="form-control" placeholder="Ex: Dell, Lenovo, HP">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Modelo</label>
+                <input type="text" class="form-control" placeholder="Ex: Latitude 5420">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Número de Série</label>
+                <input type="text" class="form-control" placeholder="Ex: SN123456789">
+            </div>
+        </div>
+
+        <h5 class="form-section-title">Sistema</h5>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <label class="form-label">Sistema Operacional</label>
+                <input type="text" class="form-control" name="sistema" placeholder="Ex: Windows 11 Pro" value="{{ ativo.sistema if ativo else '' }}">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Versão</label>
+                <input type="text" class="form-control" placeholder="Ex: 23H2">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Endereço IP</label>
+                <input type="text" class="form-control" placeholder="Ex: 192.168.1.10">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">MAC Address</label>
+                <input type="text" class="form-control" placeholder="Ex: 00:1A:2B:3C:4D:5E">
+            </div>
+        </div>
+
+        <h5 class="form-section-title">Responsabilidade</h5>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <label class="form-label">Responsável</label>
+                <input type="text" class="form-control" name="responsavel" placeholder="Ex: Ademir Soares" value="{{ ativo.responsavel if ativo else '' }}">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Departamento</label>
+                <input type="text" class="form-control" placeholder="Ex: CyberSecurity">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Localização</label>
+                <input type="text" class="form-control" name="localizacao" placeholder="Ex: Data Center" value="{{ ativo.localizacao if ativo else '' }}">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select class="form-select" name="status">
+                    <option value="">Selecione...</option>
+                    <option value="Em uso" {% if ativo and ativo.status == "Em uso" %}selected{% endif %}>Em uso</option>
+                    <option value="Ativo" {% if ativo and ativo.status == "Ativo" %}selected{% endif %}>Ativo</option>
+                    <option value="Manutenção" {% if ativo and ativo.status == "Manutenção" %}selected{% endif %}>Manutenção</option>
+                    <option value="Inativo" {% if ativo and ativo.status == "Inativo" %}selected{% endif %}>Inativo</option>
+                </select>
+            </div>
+        </div>
+
+        <h5 class="form-section-title">Informações Extras</h5>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="form-label">Data de Aquisição</label>
+                <input type="date" class="form-control">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Garantia</label>
+                <input type="date" class="form-control">
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Observações</label>
+            <textarea class="form-control" rows="6" placeholder="Informações adicionais sobre o ativo..."></textarea>
+        </div>
+
+        <div class="form-actions">
+            <a href="/ativos" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i>
+                Salvar Ativo
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
