@@ -1,36 +1,20 @@
+from app.database import db
+from app.models import Ativo
 from flask import render_template, request, redirect, url_for, flash
-
-ativos = []
-proximo_id = 1
 
 def init_app(app):
 
     @app.route("/")
     def dashboard():
 
-        total_ativos = len(ativos)
+        total_ativos = Ativo.query.count()
 
-        ativos_ativos = len([
-            ativo for ativo in ativos
-            if ativo["status"] == "Ativo"
-        ])
+        ativos_ativos = Ativo.query.filter_by(status="Ativo").count()
+        ativos_em_uso = Ativo.query.filter_by(status="Em uso").count()
+        ativos_manutencao = Ativo.query.filter_by(status="Manutenção").count()
+        ativos_inativos = Ativo.query.filter_by(status="Inativo").count()
 
-        ativos_em_uso = len([
-            ativo for ativo in ativos
-            if ativo["status"] == "Em uso"
-        ])
-
-        ativos_manutencao = len([
-            ativo for ativo in ativos
-            if ativo["status"] == "Manutenção"
-        ])
-
-        ativos_inativos = len([
-            ativo for ativo in ativos
-            if ativo["status"] == "Inativo"
-        ])
-
-        ultimos_ativos = ativos[-3:]
+        ultimos_ativos = Ativo.query.order_by(Ativo.id.desc()).limit(3).all()
 
         return render_template(
             "dashboard.html",
@@ -48,49 +32,41 @@ def init_app(app):
 
         pesquisa = request.args.get("pesquisa", "").lower()
 
-        ativos_filtrados = ativos
-
         if pesquisa:
+            ativos_filtrados = Ativo.query.filter(
+                (Ativo.patrimonio.ilike(f"%{pesquisa}%")) |
+                (Ativo.hostname.ilike(f"%{pesquisa}%")) |
+                (Ativo.tipo.ilike(f"%{pesquisa}%")) |
+                (Ativo.sistema.ilike(f"%{pesquisa}%")) |
+                (Ativo.responsavel.ilike(f"%{pesquisa}%"))
+            ).all()
+        else:
+            ativos_filtrados = Ativo.query.all()
 
-            ativos_filtrados = []
-
-            for ativo in ativos:
-
-                if (
-                    pesquisa in ativo["patrimonio"].lower()
-                    or pesquisa in ativo["hostname"].lower()
-                    or pesquisa in ativo["tipo"].lower()
-                    or pesquisa in ativo["sistema"].lower()
-                    or pesquisa in ativo["responsavel"].lower()
-                ):
-
-                    ativos_filtrados.append(ativo)
+        total_ativos = Ativo.query.count()
 
         return render_template(
             "ativos.html",
             pagina="ativos",
             ativos=ativos_filtrados,
             pesquisa=pesquisa,
-            total_ativos=len(ativos)
+            total_ativos=total_ativos
         )
 
     @app.route("/ativos/novo", methods=["GET", "POST"])
     def novo_ativo():
-        global proximo_id
-        
+
         if request.method == "POST":
-            ativo = {
-                "id": proximo_id,
-                "patrimonio": request.form.get("patrimonio"),
-                "hostname": request.form.get("hostname"),
-                "tipo": request.form.get("tipo"),
-                "sistema": request.form.get("sistema"),
-                "responsavel": request.form.get("responsavel"),
-                "status": request.form.get("status"),
-                "localizacao": request.form.get("localizacao"),
-            }
-            
-            if not ativo["patrimonio"] or not ativo["hostname"] or not ativo["tipo"] or ativo["tipo"] == "Selecione...":
+
+            patrimonio = request.form.get("patrimonio")
+            hostname = request.form.get("hostname")
+            tipo = request.form.get("tipo")
+            sistema = request.form.get("sistema")
+            responsavel = request.form.get("responsavel")
+            status = request.form.get("status")
+            localizacao = request.form.get("localizacao")
+
+            if not patrimonio or not hostname or not tipo or tipo == "Selecione...":
                 return render_template(
                     "form_ativo.html",
                     pagina="ativos",
@@ -99,8 +75,19 @@ def init_app(app):
                     erro="Preencha os campos obrigatórios: patrimônio, hostname e tipo."
                 )
 
-            ativos.append(ativo)
-            proximo_id += 1
+            ativo = Ativo(
+                patrimonio=patrimonio,
+                hostname=hostname,
+                tipo=tipo,
+                sistema=sistema,
+                responsavel=responsavel,
+                status=status,
+                localizacao=localizacao
+            )
+
+            db.session.add(ativo)
+            db.session.commit()
+
             flash("Ativo cadastrado com sucesso!", "success")
             return redirect(url_for("listar_ativos"))
 
@@ -113,25 +100,19 @@ def init_app(app):
     
     @app.route("/ativos/<int:id>/editar", methods=["GET", "POST"])
     def editar_ativo(id):
-        ativo_encontrado = None
 
-        for ativo in ativos:
-            if ativo["id"] == id:
-                ativo_encontrado = ativo
-                break
-
-        if ativo_encontrado is None:
-            flash("Ativo não encontrado.", "danger")
-            return redirect(url_for("listar_ativos"))
+        ativo = Ativo.query.get_or_404(id)
 
         if request.method == "POST":
-            ativo_encontrado["patrimonio"] = request.form.get("patrimonio")
-            ativo_encontrado["hostname"] = request.form.get("hostname")
-            ativo_encontrado["tipo"] = request.form.get("tipo")
-            ativo_encontrado["sistema"] = request.form.get("sistema")
-            ativo_encontrado["responsavel"] = request.form.get("responsavel")
-            ativo_encontrado["status"] = request.form.get("status")
-            ativo_encontrado["localizacao"] = request.form.get("localizacao")
+            ativo.patrimonio = request.form.get("patrimonio")
+            ativo.hostname = request.form.get("hostname")
+            ativo.tipo = request.form.get("tipo")
+            ativo.sistema = request.form.get("sistema")
+            ativo.responsavel = request.form.get("responsavel")
+            ativo.status = request.form.get("status")
+            ativo.localizacao = request.form.get("localizacao")
+
+            db.session.commit()
 
             flash("Ativo atualizado com sucesso!", "success")
             return redirect(url_for("listar_ativos"))
@@ -141,23 +122,16 @@ def init_app(app):
             pagina="ativos",
             titulo="Editar Ativo",
             subtitulo="Altere as informações do ativo selecionado",
-            ativo=ativo_encontrado
+            ativo=ativo
         )
         
     @app.route("/ativos/<int:id>/excluir")
     def excluir_ativo(id):
-        ativo_encontrado = None
 
-        for ativo in ativos:
-            if ativo["id"] == id:
-                ativo_encontrado = ativo
-                break
+        ativo = Ativo.query.get_or_404(id)
 
-        if ativo_encontrado is None:
-            flash("Ativo não encontrado.", "danger")
-            return redirect(url_for("listar_ativos"))
-
-        ativos.remove(ativo_encontrado)
+        db.session.delete(ativo)
+        db.session.commit()
 
         flash("Ativo excluído com sucesso!", "success")
         return redirect(url_for("listar_ativos"))
