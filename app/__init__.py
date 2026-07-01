@@ -3,6 +3,7 @@ from flask import Flask
 from app.config import Config
 from app.database import db
 from app.routes import init_app
+from app import models
 
 
 def create_app():
