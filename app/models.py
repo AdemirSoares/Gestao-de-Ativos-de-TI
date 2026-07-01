@@ -14,6 +14,10 @@ class Ativo(db.Model):
     tipo = db.Column(db.String(50), nullable=False)
 
     sistema = db.Column(db.String(100), nullable=False)
+    
+    fabricante = db.Column(db.String(100), nullable=True)
+
+    modelo = db.Column(db.String(100), nullable=True)
 
     responsavel = db.Column(db.String(100), nullable=True)
 
